@@ -1,0 +1,26 @@
+databases:
+  - name: cotizador-construccion-db
+    plan: free
+    postgresMajorVersion: 16
+
+services:
+  - type: web
+    name: cotizador-construccion
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        sync: false          # generar con `php artisan key:generate --show` y pegarlo en el dashboard
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cotizador-construccion-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false          # opcional — solo si quieres el análisis automático de planos

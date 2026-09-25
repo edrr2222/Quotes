@@ -1,0 +1,14 @@
+/vendor
+/node_modules
+/public/build
+/public/hot
+.env
+.env.backup
+/storage/*.key
+/storage/app/planos/*
+/storage/app/documentos/*
+!/storage/app/planos/.gitkeep
+!/storage/app/documentos/.gitkeep
+/database/database.sqlite
+.DS_Store
+Thumbs.db
