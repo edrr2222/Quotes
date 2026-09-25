@@ -7,8 +7,8 @@ use App\Models\Documento;
 use App\Services\CotizacionSummaryService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentoController extends Controller
 {
@@ -47,7 +47,7 @@ class DocumentoController extends Controller
         return back();
     }
 
-    public function descargar(Documento $documento): HttpResponse
+    public function descargar(Documento $documento): StreamedResponse
     {
         abort_unless($documento->cotizacion->proyecto->user_id === auth()->id(), 403);
 

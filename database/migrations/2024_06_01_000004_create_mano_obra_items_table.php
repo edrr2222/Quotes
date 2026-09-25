@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('mano_obra_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cotizacion_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->cascadeOnDelete();
             $table->string('cargo');
             $table->unsignedInteger('numero_personas');
             $table->decimal('jornal_basico', 12, 2);

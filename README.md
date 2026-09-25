@@ -37,40 +37,25 @@ valor más en el enum `tipo`, no un cambio de arquitectura.
 
 ## 2. Instalación (ejecutar en tu máquina, con internet)
 
-Este directorio trae el **código de negocio** (migraciones, modelos, controladores,
-servicios, páginas React, plantillas PDF, `CLAUDE.md`). No trae el esqueleto base de
-Laravel/Breeze porque se generó en un entorno sin acceso a Packagist. Se instala así:
+El repositorio ya incluye el esqueleto completo (Laravel 12 + Breeze React/Inertia +
+dompdf), así que basta con clonarlo e instalar dependencias (requiere PHP 8.2+, Composer y
+Node 20+):
 
 ```bash
-# 1. Crear un Laravel nuevo en una carpeta aparte
-composer create-project laravel/laravel cotizador-construccion
+git clone https://github.com/edrr2222/Quotes.git cotizador-construccion
 cd cotizador-construccion
 
-# 2. Dependencias de este proyecto
-composer require inertiajs/inertia-laravel barryvdh/laravel-dompdf laravel/sanctum
-
-# 3. Auth con Breeze (stack React + Inertia)
-composer require laravel/breeze --dev
-php artisan breeze:install react
+composer install
 npm install
 
-# 4. Copiar encima los archivos de este paquete (sobrescribe rutas/migraciones de ejemplo)
-#    Copia el contenido de este ZIP dentro de la carpeta cotizador-construccion/,
-#    confirmando sobrescribir routes/web.php
-
-# 5. Base de datos portable (SQLite)
-touch database/database.sqlite
-# en .env: DB_CONNECTION=sqlite  (y comenta/borra las demás variables DB_*)
-
-# 6. (Opcional) análisis automático de planos con IA
-# en .env: ANTHROPIC_API_KEY=sk-ant-...
-
-# 7. Migrar y compilar
+cp .env.example .env          # queda con DB_CONNECTION=sqlite
 php artisan key:generate
+touch database/database.sqlite
 php artisan migrate
-npm run build
 
-# 8. Levantar
+# (Opcional) análisis automático de planos con IA: en .env, ANTHROPIC_API_KEY=sk-ant-...
+
+npm run build
 php artisan serve
 ```
 
@@ -113,8 +98,7 @@ CLAUDE.md              Contexto para retomar el desarrollo con Claude Code
 El paquete trae `Dockerfile` + `render.yaml` listos (PHP-FPM + Nginx en un solo contenedor,
 build de los assets React/Inertia en una etapa previa). Pasos:
 
-1. Sube el proyecto completo (el Laravel ya armado con Breeze + estos archivos encima) a un
-   repositorio de GitHub.
+1. El código ya está en GitHub (`edrr2222/Quotes`).
 2. En Render: **New → Blueprint**, apunta al repo — Render lee `render.yaml` y crea el Web
    Service (Docker) y la base de datos PostgreSQL juntos.
 3. Genera la `APP_KEY` en tu máquina con `php artisan key:generate --show` y pégala en las
@@ -147,4 +131,5 @@ Antes del primer deploy:
    `migrate`) crea el schema `cotizador` si todavía no existe la primera vez — evita que
    `migrate` falle al intentar crear su tabla de control en un schema inexistente.
 
-Ver `config.database.pgsql.additions.md` para el bloque exacto de `config/database.php`.
+La conexión `pgsql` de `config/database.php` lee `DB_SCHEMA` (clave propia `app_schema` y el
+`search_path` real de la conexión).

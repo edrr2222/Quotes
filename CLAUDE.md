@@ -22,7 +22,7 @@ que `ANTHROPIC_API_KEY` esté configurada.
 
 ## Stack
 
-- **Backend**: Laravel 11 (PHP 8.2+)
+- **Backend**: Laravel 12 (PHP 8.2+)
 - **Frontend**: React 18 vía Inertia.js (no es una API separada; Inertia sirve las páginas
   React directamente desde las rutas de Laravel, sin necesidad de un SPA independiente)
 - **Auth**: Laravel Breeze (stack React + Inertia) — login/registro/recuperación de contraseña
@@ -45,15 +45,12 @@ que `ANTHROPIC_API_KEY` esté configurada.
 - **Análisis de planos**: llamadas server-side a la API de Anthropic (`ANTHROPIC_API_KEY` en
   `.env`) para leer los PDF de planos (convertidos a imagen) y extraer cotas/metadatos
 
-## Cómo se instaló este repo (importante para entender qué falta)
+## Esqueleto base
 
-Este directorio contiene el **código de negocio ya escrito** (migraciones, modelos,
-controladores, servicios, páginas React, plantillas PDF) pero NO contiene el esqueleto base
-de Laravel/Breeze (vendor/, node_modules/, config/, bootstrap/, public/index.php, etc.),
-porque el entorno donde se generó no tenía acceso a Packagist. Ver `README.md` para los
-pasos exactos: se crea un Laravel nuevo con Breeze+React, y estos archivos se copian encima.
-
-Si estás retomando este proyecto y el esqueleto base ya existe, ignora esta sección.
+El repo incluye el esqueleto completo: **Laravel 12** (no 11 — todas las versiones 11.x quedaron
+bloqueadas por advisories de seguridad sin parche) + Breeze (React/Inertia) + dompdf. Ojo con el
+pluralizador inglés de Laravel en nombres de dominio en español: `Cotizacion` necesita
+`$table = 'cotizaciones'` y las FK hacia ella `->constrained('cotizaciones')`.
 
 ## Modelo de dominio
 

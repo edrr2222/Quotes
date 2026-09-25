@@ -12,7 +12,11 @@ services:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
+        value: "false"
+      - key: APP_URL
+        sync: false          # https://<nombre-del-servicio>.onrender.com
+      - key: LOG_CHANNEL
+        value: stderr
       - key: APP_KEY
         sync: false          # generar con `php artisan key:generate --show` y pegarlo en el dashboard
       - key: DB_CONNECTION

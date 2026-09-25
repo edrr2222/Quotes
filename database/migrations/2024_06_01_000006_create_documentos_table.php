@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('documentos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cotizacion_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->cascadeOnDelete();
             // Los 3 documentos que debe poder generar el sistema (ver CLAUDE.md):
             //  - especificacion:            solo el alcance/especificación del trabajo, sin precios
             //  - especificacion_mano_obra:  especificación + cotización de mano de obra

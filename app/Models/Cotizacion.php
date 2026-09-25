@@ -11,6 +11,9 @@ class Cotizacion extends Model
 {
     use HasFactory;
 
+    // El pluralizador de Laravel (inglés) daría "cotizacions".
+    protected $table = 'cotizaciones';
+
     protected $fillable = [
         'proyecto_id', 'numero', 'jornales', 'factor_prestacional',
         'imprevistos_mano_obra_pct', 'transporte_pct', 'herramienta_pct',

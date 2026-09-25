@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('material_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cotizacion_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('cotizacion_id')->constrained('cotizaciones')->cascadeOnDelete();
             $table->enum('categoria', ['obra_civil', 'hidraulico', 'electrico']);
             $table->string('descripcion');
             $table->string('unidad', 20);
