@@ -131,3 +131,20 @@ opciones (Render Disks o un bucket S3-compatible como Cloudflare R2).
 
 **Nota sobre SQLite**: en Render se usa PostgreSQL (`DB_CONNECTION=pgsql`), no SQLite. Las
 migraciones de este paquete no usan nada específico de SQLite, así que no hay que tocarlas.
+
+**Base de datos compartida**: este proyecto NO crea su propia instancia de Postgres en
+Render — reutiliza una instancia existente compartida con otras dos apps (Render solo
+permite una base gratis por cuenta), aislado en su propio schema y rol de Postgres.
+Antes del primer deploy:
+
+1. Corre `sql/001_schema_setup.sql` conectado con la External Connection String de la
+   base compartida (como el usuario admin, no como el rol nuevo) — crea el rol
+   `cotizador_user` y el schema `cotizador`, sin tocar los schemas de las otras apps.
+2. En Render, llena las variables de entorno de `render.yaml` marcadas `sync: false`
+   (`DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_SSLMODE`) con los datos del rol que
+   acabas de crear.
+3. El comando `php artisan db:prepare-schema` (ya incluido en `docker/start.sh`, antes de
+   `migrate`) crea el schema `cotizador` si todavía no existe la primera vez — evita que
+   `migrate` falle al intentar crear su tabla de control en un schema inexistente.
+
+Ver `config.database.pgsql.additions.md` para el bloque exacto de `config/database.php`.

@@ -1,7 +1,6 @@
-databases:
-  - name: cotizador-construccion-db
-    plan: free
-    postgresMajorVersion: 16
+# No hay bloque "databases:" — este proyecto reutiliza la instancia Postgres
+# compartida "door_to_door" (Render solo permite una base gratis por cuenta),
+# aislado en su propio schema/rol. Ver sql/001_schema_setup.sql para crearlos.
 
 services:
   - type: web
@@ -18,9 +17,19 @@ services:
         sync: false          # generar con `php artisan key:generate --show` y pegarlo en el dashboard
       - key: DB_CONNECTION
         value: pgsql
-      - key: DATABASE_URL
-        fromDatabase:
-          name: cotizador-construccion-db
-          property: connectionString
+      - key: DB_HOST
+        sync: false          # host interno (misma región/red privada) o el de la External Connection String
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: door_to_door
+      - key: DB_USERNAME
+        sync: false          # cotizador_user (creado con sql/001_schema_setup.sql)
+      - key: DB_PASSWORD
+        sync: false          # la password que le pusiste a cotizador_user en el SQL
+      - key: DB_SCHEMA
+        value: cotizador
+      - key: DB_SSLMODE
+        sync: false          # "require" si usas la External Connection String; "prefer" o vacío si es host interno
       - key: ANTHROPIC_API_KEY
         sync: false          # opcional — solo si quieres el análisis automático de planos

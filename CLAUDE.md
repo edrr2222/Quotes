@@ -27,10 +27,18 @@ que `ANTHROPIC_API_KEY` esté configurada.
   React directamente desde las rutas de Laravel, sin necesidad de un SPA independiente)
 - **Auth**: Laravel Breeze (stack React + Inertia) — login/registro/recuperación de contraseña
 - **Base de datos**: SQLite en local (`database/database.sqlite`) / PostgreSQL en Render
-  (`DB_CONNECTION=pgsql`, vía `DATABASE_URL`). Las migraciones no usan nada específico de
-  SQLite, así que no requieren cambios entre ambas.
+  (`DB_CONNECTION=pgsql`). **En producción, la base es compartida con otras dos apps**
+  (Door To Door y MyBarberShop) sobre la misma instancia de Render (plan free = una sola
+  base por cuenta) — este proyecto vive aislado en su propio schema (`cotizador`) y su
+  propio rol de Postgres (`cotizador_user`), sin acceso a los schemas de las otras apps.
+  Ver `sql/001_schema_setup.sql` (el script que crea rol+schema, se corre a mano una sola
+  vez) y `app/Console/Commands/PrepareSchema.php` (`db:prepare-schema`, corre en cada
+  deploy antes de `migrate` porque el schema debe existir antes de que Laravel cree su
+  tabla de control de migraciones). Las migraciones en sí no cambian: Postgres las aplica
+  dentro del schema que indique el `search_path` de la conexión, de forma transparente.
 - **Despliegue**: `Dockerfile` (PHP-FPM + Nginx + build de assets en una etapa previa) +
-  `render.yaml` (blueprint: web service + base de datos). Ver `docker/ALMACENAMIENTO.md` para
+  `render.yaml` (blueprint: solo el web service — la base NO se crea desde este blueprint,
+  es la instancia compartida ya existente). Ver `docker/ALMACENAMIENTO.md` para
   el problema del disco efímero de Render (planos y PDF generados necesitan un disco montado
   o un bucket S3-compatible, no el filesystem local del contenedor).
 - **PDF**: `barryvdh/laravel-dompdf` sobre vistas Blade (no genera los PDF desde React)
@@ -102,7 +110,10 @@ Cotizacion (1) ──< Documento (N)          los 3 PDF generados (ver más abaj
    (`resources/views/pdf/_especificacion-seccion.blade.php`), incluido en los 3 — no la
    dupliques copiando el HTML en cada plantilla.
 
-## Análisis de planos (`PlanoAnalyzerService`)
+6. **Nunca hardcodear el nombre del schema** (`cotizador`) en queries, migraciones o
+   Blade/React. Si algún código necesita saberlo explícitamente, se lee de
+   `config('database.connections.pgsql.app_schema')` — igual que hace
+   `PrepareSchema.php` — nunca como un string literal repetido en varios sitios.
 
 Flujo:
 1. Se sube un PDF a un `Proyecto`.
